@@ -1,0 +1,9 @@
+{
+    "name": "Test",
+    "label": "Test",
+    "description": "Test",
+    "installed": true,
+    "enabled": true,
+    "version": "1.0",
+    "order": 0
+}
