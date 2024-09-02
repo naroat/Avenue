@@ -1,106 +1,96 @@
 <?php
-
+declare(strict_types=1);
+/**
+ * MineAdmin is committed to providing solutions for quickly building web applications
+ * Please view the LICENSE file that was distributed with this source code,
+ * For the full copyright and license information.
+ * Thank you very much for using MineAdmin.
+ *
+ * @Author X.Mo<root@imoi.cn>
+ * @Link   https://gitee.com/xmo/MineAdmin
+ */
 
 namespace App\Avenue\Controller\Admin;
 
+use App\Avenue\Request\AvenueConfigRequest;
 use App\Avenue\Service\AvenueConfigService;
-use Mine\Middlewares\CheckModuleMiddleware;
 use Hyperf\Di\Annotation\Inject;
-use App\Package\Verify;
 use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Annotation\Middleware;
-use App\Avenue\Service\AvenueProductService;
-use Mine\MineController;
+use Hyperf\HttpServer\Annotation\PostMapping;
+use Hyperf\HttpServer\Annotation\PutMapping;
 use Mine\Annotation\Auth;
-use Hyperf\HttpServer\Annotation\RequestMapping;
+use Mine\Annotation\OperationLog;
 use Mine\Annotation\Permission;
+use Mine\Annotation\RemoteState;
+use Mine\Middlewares\CheckModuleMiddleware;
+use Mine\MineController;
+use Psr\Http\Message\ResponseInterface;
 
-#[Controller(prefix: 'avenue/config'), Auth]
+/**
+ * 配置管理控制器
+ * Class AvenueConfigController
+ */
+#[Controller(prefix: "avenue/config"), Auth]
 #[Middleware(middleware: CheckModuleMiddleware::class)]
 class AvenueConfigController extends MineController
 {
+    /**
+     * 业务处理服务
+     * AvenueConfigService
+     */
     #[Inject]
-    public AvenueConfigService $service;
+    protected AvenueConfigService $service;
 
-    #[Inject]
-    public Verify $verify;
-
-    #[RequestMapping(path: "index", methods: "get"),  Permission('avenue:config, avenue:config:index')]
-    public function index()
+    
+    /**
+     * 列表
+     * @return ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[GetMapping("index"), Permission("avenue:config, avenue:config:index")]
+    public function index(): ResponseInterface
     {
-        $params = $this->verify->requestParams([
-            ['code', ''],
-            ['desc', ''],
-        ], $this->request);
-        try {
-            $list = $this->service->getList($params);
-            return $this->success($list);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage());
-        }
+        return $this->success($this->service->getPageList($this->request->all()));
     }
 
-    #[RequestMapping(path: "read/{id}", methods: "get"),  Permission('avenue:config:read')]
-    public function read($id)
+    /**
+     * 更新
+     * @param int $id
+     * @param AvenueConfigRequest $request
+     * @return ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[PutMapping("update/{id}"), Permission("avenue:config:update"), OperationLog]
+    public function update(int $id, AvenueConfigRequest $request): ResponseInterface
     {
-        try {
-            $list = $this->service->getOne($id);
-            return $this->success($list);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage());
-        }
+        return $this->service->update($id, $request->all()) ? $this->success() : $this->error();
     }
 
-    #[RequestMapping(path: "update/{id}", methods: "put"),  Permission('avenue:config:update')]
-    public function update($id)
+    /**
+     * 读取数据
+     * @param int $id
+     * @return ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[GetMapping("read/{id}"), Permission("avenue:config:read")]
+    public function read(int $id): ResponseInterface
     {
-        try {
-            $params = $this->verify->requestParams([
-                ['value', ''],
-            ], $this->request);
-            $this->verify->check($params, [
-                'value' => 'required',
-            ], []);
-            $this->service->edit($id, $params);
-            return $this->success([]);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage());
-        }
+        return $this->success($this->service->read($id));
     }
 
-    #[RequestMapping(path: "getConfigByCode", methods: "get"),  Permission('avenue:config:getConfigByCode')]
-    public function getConfigByCode()
-    {
-        try {
-            $params = $this->verify->requestParams([
-                ['code', ''],
-            ], $this->request);
-            $this->verify->check($params, [
-                'code' => 'required',
-            ]);
-            $list = $this->service->getConfigByCode($params['code']);
-            return $this->success($list);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage());
-        }
-    }
 
-    #[RequestMapping(path: "setConfigByCode", methods: "post"),  Permission('avenue:config:setConfigByCode')]
-    public function setConfigByCode()
+    /**
+     * 远程万能通用列表接口
+     * @return ResponseInterface
+     */
+    #[PostMapping("remote"), RemoteState(true)]
+    public function remote(): ResponseInterface
     {
-        try {
-            $params = $this->verify->requestParams([
-                ['code', ''],
-                ['value', ''],
-            ], $this->request);
-            $this->verify->check($params, [
-                'code' => 'required',
-                'value' => 'required',
-            ]);
-            $this->service->setConfigByCode($params['code'], $params);
-            return $this->success([]);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage());
-        }
+        return $this->success($this->service->getRemoteList($this->request->all()));
     }
 }

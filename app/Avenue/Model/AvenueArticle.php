@@ -35,12 +35,4 @@ class AvenueArticle extends MineModel
      * The attributes that should be cast to native types.
      */
     protected array $casts = ['id' => 'integer', 'cate_id' => 'integer', 'click' => 'integer', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
-
-    /**
-     * @return \Hyperf\Database\Model\Relations\HasOne
-     */
-    public function avenueArticleCategory()
-    {
-        return $this->hasOne(AvenueArticleCategory::class, 'id', 'cate_id');
-    }
 }

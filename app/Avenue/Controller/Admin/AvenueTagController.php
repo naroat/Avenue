@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace App\Avenue\Controller\Admin;
 
-use App\Avenue\Request\AvenueArticleRequest;
-use App\Avenue\Service\AvenueArticleService;
+use App\Avenue\Request\AvenueTagRequest;
+use App\Avenue\Service\AvenueTagService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\DeleteMapping;
@@ -30,58 +30,42 @@ use Mine\MineController;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * 文章管理控制器
- * Class AvenueArticleController
+ * 产品标签控制器
+ * Class AvenueTagController
  */
-#[Controller(prefix: "avenue/article"), Auth]
+#[Controller(prefix: "avenue/tag"), Auth]
 #[Middleware(middleware: CheckModuleMiddleware::class)]
-class AvenueArticleController extends MineController
+class AvenueTagController extends MineController
 {
     /**
      * 业务处理服务
-     * AvenueArticleService
+     * AvenueTagService
      */
     #[Inject]
-    protected AvenueArticleService $service;
+    protected AvenueTagService $service;
 
-    
     /**
      * 列表
      * @return ResponseInterface
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    #[GetMapping("index"), Permission("avenue:article, avenue:article:index")]
+    #[GetMapping("index"), Permission("avenue:tag, avenue:tag:index")]
     public function index(): ResponseInterface
     {
         return $this->success($this->service->getPageList($this->request->all()));
     }
 
     /**
-     * 新增
-     * @param AvenueArticleRequest $request
+     * 单个或批量删除数据到回收站
      * @return ResponseInterface
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    #[PostMapping("save"), Permission("avenue:article:save"), OperationLog]
-    public function save(AvenueArticleRequest $request): ResponseInterface
+    #[DeleteMapping("delete"), Permission("avenue:tag:delete"), OperationLog]
+    public function delete(): ResponseInterface
     {
-        return $this->success(['id' => $this->service->save($request->all())]);
-    }
-
-    /**
-     * 更新
-     * @param int $id
-     * @param AvenueArticleRequest $request
-     * @return ResponseInterface
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
-    #[PutMapping("update/{id}"), Permission("avenue:article:update"), OperationLog]
-    public function update(int $id, AvenueArticleRequest $request): ResponseInterface
-    {
-        return $this->service->update($id, $request->all()) ? $this->success() : $this->error();
+        return $this->service->delete((array) $this->request->input('ids', [])) ? $this->success() : $this->error();
     }
 
     /**
@@ -91,22 +75,37 @@ class AvenueArticleController extends MineController
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    #[GetMapping("read/{id}"), Permission("avenue:article:read")]
+    #[GetMapping("read/{id}"), Permission("avenue:tag:read")]
     public function read(int $id): ResponseInterface
     {
         return $this->success($this->service->read($id));
     }
 
     /**
-     * 单个或批量删除数据到回收站
+     * 更新
+     * @param int $id
+     * @param AvenueTagRequest $request
      * @return ResponseInterface
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    #[DeleteMapping("delete"), Permission("avenue:article:delete"), OperationLog]
-    public function delete(): ResponseInterface
+    #[PutMapping("update/{id}"), Permission("avenue:tag:update"), OperationLog]
+    public function update(int $id, AvenueTagRequest $request): ResponseInterface
     {
-        return $this->service->delete((array) $this->request->input('ids', [])) ? $this->success() : $this->error();
+        return $this->service->update($id, $request->all()) ? $this->success() : $this->error();
+    }
+
+    /**
+     * 新增
+     * @param AvenueTagRequest $request
+     * @return ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[PostMapping("save"), Permission("avenue:tag:save"), OperationLog]
+    public function save(AvenueTagRequest $request): ResponseInterface
+    {
+        return $this->success(['id' => $this->service->save($request->all())]);
     }
 
 

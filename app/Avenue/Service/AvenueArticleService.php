@@ -1,98 +1,32 @@
 <?php
-
+declare(strict_types=1);
+/**
+ * MineAdmin is committed to providing solutions for quickly building web applications
+ * Please view the LICENSE file that was distributed with this source code,
+ * For the full copyright and license information.
+ * Thank you very much for using MineAdmin.
+ *
+ * @Author X.Mo<root@imoi.cn>
+ * @Link   https://gitee.com/xmo/MineAdmin
+ */
 
 namespace App\Avenue\Service;
 
-use App\Avenue\Model\AvenueArticle;
-use App\Package\Utils;
-use Hyperf\DbConnection\Db;
+use App\Avenue\Mapper\AvenueArticleMapper;
+use Mine\Abstracts\AbstractService;
 
-class AvenueArticleService
+/**
+ * 文章管理服务类
+ */
+class AvenueArticleService extends AbstractService
 {
-    private function getModel()
+    /**
+     * @var AvenueArticleMapper
+     */
+    public $mapper;
+
+    public function __construct(AvenueArticleMapper $mapper)
     {
-        return make(AvenueArticle::class);
-    }
-
-    public function getList($params)
-    {
-        $list = $this->getModel()->with('avenueArticleCategory');
-        if (!empty($params['title']) && $params['title'] != '') {
-            $list = $list->where('title', 'like', "%{$params['title']}%");
-        }
-        if (!empty($params['cate_id']) && $params['cate_id'] != '') {
-            $list = $list->where('cate_id', $params['cate_id']);
-        }
-        $list = $list->paginate(36);
-        return CommonService::buildPaginate($list);
-    }
-
-    public function getOne($id)
-    {
-        return $this->getModel()->find($id);
-    }
-
-    public function add($params)
-    {
-        Db::transaction(function () use ($params) {
-            $model = $this->getModel();
-            Utils::setSaveData($model, [
-                'title' => $params['title'],
-                'desc' => $params['desc'],
-                'content' => $params['content'],
-                'cate_id' => $params['cate_id'],
-            ]);
-            $model->save();
-        });
-
-
-        return true;
-    }
-
-    public function edit($params)
-    {
-        $model = $this->getModel();
-        $info = $model->find($params['id']);
-        if (!$info) {
-            throw new \Exception("信息不存在");
-        }
-        Db::transaction(function () use ($info, $params) {
-            //save
-            Utils::setSaveData($info, [
-                'id' => $params['id'],
-                'title' => $params['title'],
-                'content' => $params['desc'],
-                'content' => $params['content'],
-                'cate_id' => $params['cate_id'],
-            ]);
-            $info->save();
-        });
-        return true;
-    }
-
-    public function delete($params)
-    {
-        foreach ($params['ids'] as $id) {
-            $info = $this->getModel()->find($id);
-            if (!$info) {
-                throw new \Exception('数据不存在');
-            }
-            $info->delete();
-        }
-        return true;
-    }
-
-    public function addClick($id)
-    {
-        $model = $this->getModel();
-        $info = $model->find($id);
-        if (!$info) {
-            throw new \Exception("信息不存在");
-        }
-        Utils::setSaveData($info, [
-            'click' => $info->click + 1,
-        ]);
-        $info->save();
-        return true;
+        $this->mapper = $mapper;
     }
 }

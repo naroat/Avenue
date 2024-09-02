@@ -1,76 +1,61 @@
 <?php
-
+declare(strict_types=1);
+/**
+ * MineAdmin is committed to providing solutions for quickly building web applications
+ * Please view the LICENSE file that was distributed with this source code,
+ * For the full copyright and license information.
+ * Thank you very much for using MineAdmin.
+ *
+ * @Author X.Mo<root@imoi.cn>
+ * @Link   https://gitee.com/xmo/MineAdmin
+ */
 
 namespace App\Avenue\Service;
 
+use App\Avenue\Mapper\AvenueConfigMapper;
 use App\Avenue\Model\AvenueConfig;
 use App\Package\Utils;
-use Hyperf\DbConnection\Db;
+use Mine\Abstracts\AbstractService;
 
-class AvenueConfigService
+/**
+ * 配置管理服务类
+ */
+class AvenueConfigService extends AbstractService
 {
-    private function getModel()
+    /**
+     * @var AvenueConfigMapper
+     */
+    public $mapper;
+
+    public function __construct(AvenueConfigMapper $mapper)
     {
-        return make(AvenueConfig::class);
+        $this->mapper = $mapper;
     }
 
-    public function getList($params)
+    public function getPageList(?array $params = null, bool $isScope = true): array
     {
-        $list = $this->getModel()->where('is_show', 1);
-        if (!empty($params['code']) && $params['code'] != '') {
-            $list = $list->where('code', 'like', "%{$params['code']}%");
-        }
-        if (!empty($params['desc']) && $params['desc'] != '') {
-            $list = $list->where('desc', 'like', "%{$params['desc']}%");
-        }
-        $list = $list->paginate(10);
+        $list = $this->mapper->listQuerySetting($params, $isScope)->paginate();
+
         $list->each(function ($item) {
-            if (in_array($item->code, AvenueConfig::NEED_HTML_DECODE) && !empty($item->value)) {
-                $item->value = htmlspecialchars_decode($item->value);
+            if (!empty($item->value)) {
+                $item->value = html_entity_decode($item->value);
             }
         });
-        return CommonService::buildPaginate($list);
+        return $this->mapper->setPaginate($list);
     }
 
-    public function getOne($id)
+    public function update(mixed $id, array $data): bool
     {
-        $data = $this->getModel()->find($id);
-        if (in_array($data->code, AvenueConfig::NEED_HTML_DECODE)) {
-            $data->value = htmlspecialchars_decode($data->value);
+        $data = Utils::setSaveData($data);
+        return $this->mapper->update($id, $data);
+    }
+
+    public function getConfigByCode(?array $params = null)
+    {
+        $data = $this->mapper->getModel()->where('code', $params['code'])->first();
+        if (in_array($data->code, AvenueConfig::$htmlTran)) {
+            $data->value = html_entity_decode($data->value);
         }
         return $data;
-    }
-
-    public function edit($id, $params)
-    {
-        $model = $this->getModel();
-        $info = $model->find($id);
-        if (!$info) {
-            throw new \Exception("信息不存在");
-        }
-        //save
-        Utils::setSaveData($info, [
-            'value' => $params['value'],
-        ]);
-        $info->save();
-        return true;
-    }
-
-    public function getConfigByCode($code)
-    {
-        $data = $this->getModel()->where('code', $code)->find();
-        if (!$data) {
-            throw new \Exception('数据不存在');
-        }
-        return $data;
-    }
-
-    public function setConfigByCode($code, $param)
-    {
-        $data = $this->getConfigByCode($code);
-        Utils::setSaveData($data, [
-            'value' => $param['value'],
-        ]);
-        $data->save();
     }
 }

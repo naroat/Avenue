@@ -12,20 +12,20 @@ declare(strict_types=1);
 
 namespace App\Avenue\Service;
 
-use App\Avenue\Mapper\AvenueArticleCategoryMapper;
+use App\Avenue\Mapper\AvenueTagMapper;
 use Mine\Abstracts\AbstractService;
 
 /**
- * 文章分类服务类
+ * 标签服务类
  */
-class AvenueArticleCategoryService extends AbstractService
+class AvenueTagService extends AbstractService
 {
     /**
-     * @var AvenueArticleCategoryMapper
+     * @var AvenueTagMapper
      */
     public $mapper;
 
-    public function __construct(AvenueArticleCategoryMapper $mapper)
+    public function __construct(AvenueTagMapper $mapper)
     {
         $this->mapper = $mapper;
     }
@@ -42,11 +42,6 @@ class AvenueArticleCategoryService extends AbstractService
             $list = $list->paginate();
         }
 
-        $list->each(function ($item) {
-            if (!empty($item->value)) {
-                $item->value = html_entity_decode($item->value);
-            }
-        });
         return $flag ? $this->mapper->setPaginate($list) : $list->toArray();
     }
 }

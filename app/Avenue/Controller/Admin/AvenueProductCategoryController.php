@@ -1,109 +1,122 @@
 <?php
-
+declare(strict_types=1);
+/**
+ * MineAdmin is committed to providing solutions for quickly building web applications
+ * Please view the LICENSE file that was distributed with this source code,
+ * For the full copyright and license information.
+ * Thank you very much for using MineAdmin.
+ *
+ * @Author X.Mo<root@imoi.cn>
+ * @Link   https://gitee.com/xmo/MineAdmin
+ */
 
 namespace App\Avenue\Controller\Admin;
 
-
-
-use Mine\MineController;
+use App\Avenue\Request\AvenueProductCategoryRequest;
 use App\Avenue\Service\AvenueProductCategoryService;
-use Hyperf\HttpServer\Annotation\RequestMapping;
-use Mine\Middlewares\CheckModuleMiddleware;
-use Mine\Annotation\Auth;
-use Hyperf\HttpServer\Annotation\Controller;
-use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\DeleteMapping;
+use Hyperf\HttpServer\Annotation\GetMapping;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\PostMapping;
+use Hyperf\HttpServer\Annotation\PutMapping;
+use Mine\Annotation\Auth;
+use Mine\Annotation\OperationLog;
 use Mine\Annotation\Permission;
-use App\Package\Verify;
+use Mine\Annotation\RemoteState;
+use Mine\Middlewares\CheckModuleMiddleware;
+use Mine\MineController;
+use Psr\Http\Message\ResponseInterface;
 
-#[Controller(prefix: 'avenue/productCategory'), Auth]
+/**
+ * 产品分类控制器
+ * Class AvenueProductCategoryController
+ */
+#[Controller(prefix: "avenue/productCategory"), Auth]
 #[Middleware(middleware: CheckModuleMiddleware::class)]
 class AvenueProductCategoryController extends MineController
 {
+    /**
+     * 业务处理服务
+     * AvenueProductCategoryService
+     */
     #[Inject]
-    public AvenueProductCategoryService $service;
+    protected AvenueProductCategoryService $service;
 
-    #[Inject]
-    public Verify $verify;
-
-    #[RequestMapping(path: "index", methods: "get"),  Permission('avenue:productCategory, avenue:productCategory:index')]
-    public function index()
+    
+    /**
+     * 列表
+     * @return ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[GetMapping("index"), Permission("avenue:productCategory, avenue:productCategory:index")]
+    public function index(): ResponseInterface
     {
-        try {
-            $params = $this->verify->requestParams([
-                ['title', ''],
-                ['is_all', ''],
-            ], $this->request);
-            $list = $this->service->getList($params);
-            return $this->success($list);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage());
-        }
+        return $this->success($this->service->getPageList($this->request->all()));
     }
 
-    #[RequestMapping(path: "read/{id}", methods: "get"),  Permission('avenue:productCategory:read')]
-    public function read($id)
+    /**
+     * 新增
+     * @param AvenueProductCategoryRequest $request
+     * @return ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[PostMapping("save"), Permission("avenue:productCategory:save"), OperationLog]
+    public function save(AvenueProductCategoryRequest $request): ResponseInterface
     {
-        try {
-            $list = $this->service->getOne($id);
-            return $this->success($list);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage());
-        }
+        return $this->success(['id' => $this->service->save($request->all())]);
     }
 
-    #[RequestMapping(path: "save", methods: "post"),  Permission('avenue:productCategory:save')]
-    public function save()
+    /**
+     * 更新
+     * @param int $id
+     * @param AvenueProductCategoryRequest $request
+     * @return ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[PutMapping("update/{id}"), Permission("avenue:productCategory:update"), OperationLog]
+    public function update(int $id, AvenueProductCategoryRequest $request): ResponseInterface
     {
-        try {
-            $params = $this->verify->requestParams([
-                ['title', ''],
-                ['sort', 0],
-            ], $this->request);
-            $this->verify->check($params, [
-                'title' => 'required|between:1,8',
-                'sort' => 'integer',
-            ], []);
-            $this->service->add($params);
-            return $this->success([]);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage());
-        }
+        return $this->service->update($id, $request->all()) ? $this->success() : $this->error();
     }
 
-    #[RequestMapping(path: "update/{id}", methods: "put"),  Permission('avenue:productCategory:update')]
-    public function update(int $id)
+    /**
+     * 读取数据
+     * @param int $id
+     * @return ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[GetMapping("read/{id}"), Permission("avenue:productCategory:read")]
+    public function read(int $id): ResponseInterface
     {
-        try {
-            $params = $this->verify->requestParams([
-                ['title', ''],
-                ['sort', 0],
-            ], $this->request);
-            $this->verify->check($params, [
-                'title' => 'required|between:1,8',
-                'sort' => 'integer',
-            ], []);
-            $this->service->edit($id, $params);
-            return $this->success([]);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage());
-        }
+        return $this->success($this->service->read($id));
     }
 
-    #[RequestMapping(path: "delete", methods: "delete"),  Permission('avenue:productCategory:delete')]
-    public function delete()
+    /**
+     * 单个或批量删除数据到回收站
+     * @return ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    #[DeleteMapping("delete"), Permission("avenue:productCategory:delete"), OperationLog]
+    public function delete(): ResponseInterface
     {
-        try {
-            $params = $this->verify->requestParams([
-                ['ids', ''],
-            ], $this->request);
-            $this->verify->check($params, [
-                'ids' => 'required',
-            ], []);
-            $this->service->delete($params);
-            return $this->success([]);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage());
-        }
+        return $this->service->delete((array) $this->request->input('ids', [])) ? $this->success() : $this->error();
+    }
+
+
+    /**
+     * 远程万能通用列表接口
+     * @return ResponseInterface
+     */
+    #[PostMapping("remote"), RemoteState(true)]
+    public function remote(): ResponseInterface
+    {
+        return $this->success($this->service->getRemoteList($this->request->all()));
     }
 }

@@ -9,11 +9,11 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Mine\MineController;
 
-#[Controller(prefix: 'api/avenue/product')]
-class AvenueProductController extends MineController
+#[Controller(prefix: 'api/avenue/tag')]
+class AvenueTagController extends MineController
 {
     #[Inject]
-    public \App\Avenue\Service\AvenueProductService $service;
+    public \App\Avenue\Service\AvenueTagService $service;
 
     #[Inject]
     public Verify $verify;
@@ -23,24 +23,10 @@ class AvenueProductController extends MineController
     {
         try {
             $params = $this->verify->requestParams([
-                ['title',  ''],
-                ['cate_id', ''],
-                ['tag_id', ''],
-                ['sort', ''],    //0默认，1最新，2最热
-                ['limit', 36],
+                ['onlyMenu',  ''],
+                ['type',  ''],
             ], $this->request);
             $list = $this->service->getPageList($params, false);
-            return $this->success($list);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage());
-        }
-    }
-
-    #[RequestMapping(path: "addClick/{id}", methods: "put")]
-    public function addClick($id)
-    {
-        try {
-            $list = $this->service->addClick($id);
             return $this->success($list);
         } catch (\Exception $e) {
             return $this->error($e->getMessage());
