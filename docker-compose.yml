@@ -15,6 +15,8 @@ services:
       - ./public/admin:/usr/share/nginx/html/admin
       - ./public/web:/usr/share/nginx/html/web
       - ./docker/nginx-frontend/servers:/etc/nginx/conf.d
+      - ./docker/nginx-frontend/config:/etc/nginx/config
+      - ./docker/nginx-frontend/cert:/etc/nginx/cert
 
   # mineadmin的.env的mysql、redis如果连接到宿主机，地址用：host.docker.internal
   # 如果是连接到docker内服务，则用服务名称，如:redis

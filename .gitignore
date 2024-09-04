@@ -18,3 +18,4 @@ tests/coding_standard.xml
 tests/junit.xml
 public
 *.lock
+docker/nginx-frontend/cert/*
