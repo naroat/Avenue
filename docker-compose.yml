@@ -10,7 +10,8 @@ services:
     environment:
       - "TIMEZONE=Asia/Shanghai"
     ports:
-      - 8090:80
+      - 80:80
+      - 443:443
     volumes:
       - ./public/admin:/usr/share/nginx/html/admin
       - ./public/web:/usr/share/nginx/html/web
