@@ -10,15 +10,16 @@ services:
     environment:
       - "TIMEZONE=Asia/Shanghai"
     ports:
-      - 8101:80
+      - 8090:80
     volumes:
-      - ./mine-ui/dist:/usr/share/nginx/html
+      - ./public/admin:/usr/share/nginx/html/admin
+      - ./public/web:/usr/share/nginx/html/web
       - ./docker/nginx-frontend/servers:/etc/nginx/conf.d
 
   # mineadmin的.env的mysql、redis如果连接到宿主机，地址用：host.docker.internal
   # 如果是连接到docker内服务，则用服务名称，如:redis
   hyperf:
-    image: hyperf/hyperf:8.1-alpine-v3.18-swoole
+    image: hyperf/hyperf:8.2-alpine-v3.19-swoole
     restart: always
     environment:
       - "TIMEZONE=Asia/Shanghai"

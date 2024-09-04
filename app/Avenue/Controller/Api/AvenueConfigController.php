@@ -9,7 +9,7 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Mine\MineController;
 
-#[Controller(prefix: 'api/avenue/config')]
+#[Controller(prefix: 'v1/avenue/config')]
 class AvenueConfigController extends MineController
 {
     #[Inject]

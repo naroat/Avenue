@@ -10,7 +10,7 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Mine\MineController;
 
-#[Controller(prefix: 'api/avenue/productCategory')]
+#[Controller(prefix: 'v1/avenue/productCategory')]
 class AvenueProductCategoryController extends MineController
 {
     #[Inject]

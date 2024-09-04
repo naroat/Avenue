@@ -8,7 +8,7 @@ server {
     # 端口
     listen 80;
     # 域名
-    server_name avenue.wang;
+    server_name demo.mineadmin.com;
     # 日志
     error_log /var/log/nginx/error.log error;
     access_log /var/log/nginx/access.log;
@@ -32,7 +32,7 @@ server {
     # underscores_in_headers on;
 
     # PHP 代码
-    location /api/ {
+    location ^~/api/ {
         # 将客户端的 Host 和 IP 信息一并转发到对应节点
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
