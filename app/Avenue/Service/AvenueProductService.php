@@ -38,7 +38,6 @@ class AvenueProductService extends AbstractService
         $list = $this->mapper->listQuerySetting($params, $isScope)
             ->with('productCate')
             ->with('productTag')
-            ->orderBy('id', 'desc')
             ->paginate($params['limit'] ?? 15);
         $list->each(function ($item) {
             $item->tags = array_column($item->productTag->toArray(), 'id');

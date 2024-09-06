@@ -76,7 +76,7 @@ class AvenueProductMapper extends AbstractMapper
         }
 
         // 标签
-        if (isset($params['tag_id']) && filled($params['tag_id'])) {
+        if (isset($params['tag_id']) && $params['tag_id'] > 0) {
             $query->whereHas('productTag', function ($query) use ($params) {
                 $query->where('tag_id', $params['tag_id']);
             });
@@ -104,6 +104,18 @@ class AvenueProductMapper extends AbstractMapper
                 'deleted_at',
                 [ $params['deleted_at'][0], $params['deleted_at'][1] ]
             );
+        }
+
+        //sort
+        $query->orderBy('id', 'desc');
+        if (isset($params['sort']) && in_array($params['sort'], [1, 2])) {
+            if ($params['sort'] == 1) {
+                //new
+                $query->orderBy('created_at', 'desc');
+            } else if ($params['sort'] == 2) {
+                //hot
+                $query->orderBy('click', 'desc');
+            }
         }
 
         return $query;
