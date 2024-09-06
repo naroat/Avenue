@@ -32,7 +32,7 @@ class AvenueTagService extends AbstractService
 
     public function getPageList(?array $params = null, bool $isScope = true): array
     {
-        $list = $this->mapper->listQuerySetting($params, $isScope);
+        $list = $this->mapper->listQuerySetting($params, $isScope)->orderBy('id', 'desc');
 
         $flag = false;
         if (!empty($params['onlyMenu'])) {

@@ -27,6 +27,7 @@ class AvenueProductController extends MineController
                 ['cate_id', ''],
                 ['tag_id', ''],
                 ['sort', ''],    //0默认，1最新，2最热
+                ['status', '1'],
                 ['limit', 36],
             ], $this->request);
             $list = $this->service->getPageList($params, false);
@@ -41,6 +42,23 @@ class AvenueProductController extends MineController
     {
         try {
             $list = $this->service->addClick($id);
+            return $this->success($list);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage());
+        }
+    }
+
+    #[RequestMapping(path: "fetchProduct", methods: "post")]
+    public function fetchProduct()
+    {
+        try {
+            $params = $this->verify->requestParams([
+                ['url',  ''],
+            ], $this->request);
+            $this->verify->check($params, [
+                'url' => 'required|url'
+            ], []);
+            $list = $this->service->fetchProduct($params);
             return $this->success($list);
         } catch (\Exception $e) {
             return $this->error($e->getMessage());

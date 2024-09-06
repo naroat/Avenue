@@ -65,6 +65,11 @@ class AvenueProductMapper extends AbstractMapper
             $query->where('link', '=', $params['link']);
         }
 
+        // status
+        if (isset($params['status']) && filled($params['status'])) {
+            $query->where('status', '=', $params['status']);
+        }
+
         // 分类id
         if (isset($params['cate_id']) && filled($params['cate_id'])) {
             $query->where('cate_id', '=', $params['cate_id']);

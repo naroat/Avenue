@@ -28,6 +28,8 @@ use Mine\Annotation\RemoteState;
 use Mine\Middlewares\CheckModuleMiddleware;
 use Mine\MineController;
 use Psr\Http\Message\ResponseInterface;
+use App\Package\Verify;
+use Hyperf\HttpServer\Annotation\RequestMapping;
 
 /**
  * 产品管理控制器
@@ -44,6 +46,8 @@ class AvenueProductController extends MineController
     #[Inject]
     protected AvenueProductService $service;
 
+    #[Inject]
+    public Verify $verify;
     
     /**
      * 列表
@@ -118,5 +122,18 @@ class AvenueProductController extends MineController
     public function remote(): ResponseInterface
     {
         return $this->success($this->service->getRemoteList($this->request->all()));
+    }
+
+    #[RequestMapping(path: "fetchProduct", methods: "post")]
+    public function fetchProduct()
+    {
+        $params = $this->verify->requestParams([
+            ['url',  ''],
+        ], $this->request);
+        $this->verify->check($params, [
+            'url' => 'required|url'
+        ], []);
+        $list = $this->service->fetchProduct($params);
+        return $this->success($list);
     }
 }

@@ -32,7 +32,7 @@ class AvenueProduct extends MineModel
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['id', 'title', 'desc', 'logo', 'link', 'cate_id', 'tags', 'sort', 'click', 'created_at', 'updated_at', 'deleted_at'];
+    protected array $fillable = ['id', 'title', 'desc', 'logo', 'link', 'cate_id', 'tags', 'status', 'sort', 'click', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * The attributes that should be cast to native types.
