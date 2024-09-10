@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Avenue\Service;
 
+use App\Package\Log;
 use App\Package\Utils;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\Logger\Logger;
 use Mine\Abstracts\AbstractService;
 use Google;
 
@@ -14,8 +14,6 @@ class AvenueGoogleAuthService extends AbstractService
     #[Inject]
     public Google\Client $client;
 
-    #[Inject]
-    public Logger $logger;
     public function auth($app)
     {
         $this->client->setClientId(config('google.client_id'));
@@ -31,5 +29,7 @@ class AvenueGoogleAuthService extends AbstractService
         }
         $this->client->fetchAccessTokenWithAuthCode($params['code']);
         $accessToken = $this->client->getAccessToken();
+
+        Log::get()->info($accessToken);
     }
 }
