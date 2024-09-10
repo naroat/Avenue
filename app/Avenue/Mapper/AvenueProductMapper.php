@@ -106,7 +106,7 @@ class AvenueProductMapper extends AbstractMapper
             );
         }
 
-        //sort
+        //sortgit pu
         $query->orderBy('id', 'desc');
         if (isset($params['sort']) && in_array($params['sort'], [1, 2])) {
             if ($params['sort'] == 1) {
