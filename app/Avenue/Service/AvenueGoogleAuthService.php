@@ -24,17 +24,21 @@ class AvenueGoogleAuthService extends AbstractService
 
     public function notify($params)
     {
+        Log::get()->info('========google notiify start ======');
         if (isset($params['code']) && $params['code'] == '') {
             throw new \Exception("param error");
         }
         $this->client->setClientId(config('google.client_id'));
         $this->client->setScopes('email profile');
         $this->client->setClientSecret(config('google.client_secret'));
+        Log::get()->info(json_encode($params));
         $res = $this->client->fetchAccessTokenWithAuthCode($params['code']);
         Log::get()->info(json_encode($res));
 
         $accessToken = $this->client->getAccessToken();
 
         Log::get()->info($accessToken ?? '');
+
+        Log::get()->info('======== google notiify end ======');
     }
 }
