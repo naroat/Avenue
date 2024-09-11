@@ -38,13 +38,13 @@ class AvenueGoogleAuthService extends AbstractService
         $this->client->setScopes('email profile');
         $this->client->setClientSecret(config('google.client_secret'));
         $this->client->setRedirectUri('https://www.avenue.wang');
-        Log::get()->info(json_encode($params));
+        Log::get()->info('参数：' . json_encode($params));
         $res = $this->client->fetchAccessTokenWithAuthCode($params['code']);
-        Log::get()->info(json_encode($res));
+        Log::get()->info('auth code:' . json_encode($res));
 
         $accessToken = $this->client->getAccessToken();
 
-        Log::get()->info($accessToken ?? '');
+        Log::get()->info('access_token:' . $accessToken ?? '');
 
         Log::get()->info('======== google notiify end ======');
     }
