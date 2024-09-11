@@ -9,4 +9,5 @@ return [
     'application_name' => env('GOOGLE_APPLICATION_NAME', ''),
     'client_id' => env('GOOGLE_CLIENT_ID', ''),
     'client_secret' => env('GOOGLE_CLIENT_SECRET', ''),
+    'grant_domain' => env('GOOGLE_GRANT_DOMAIN', ''),
 ];

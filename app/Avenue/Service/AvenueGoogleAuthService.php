@@ -14,13 +14,13 @@ class AvenueGoogleAuthService extends AbstractService
     #[Inject]
     public Google\Client $client;
 
-    public function auth($app = '')
+    public function authUrl()
     {
         $state = bin2hex(random_bytes(16));
         $this->client->setState($state);
         $this->client->setClientId(config('google.client_id'));
         $this->client->setScopes('email profile');
-        $this->client->setRedirectUri('https://www.avenue.wang/api/v1/avenue/google/auth/notify');
+        $this->client->setRedirectUri(config('google.grant_domain') . '/api/v1/avenue/google/auth/notify');
         $this->client->setPrompt('consent');
         $url = $this->client->createAuthUrl();
         return $url;
@@ -38,7 +38,7 @@ class AvenueGoogleAuthService extends AbstractService
         $this->client->setClientId(config('google.client_id'));
         $this->client->setScopes('email profile');
         $this->client->setClientSecret(config('google.client_secret'));
-        $this->client->setRedirectUri('https://www.avenue.wang/api/v1/avenue/google/auth/notify');
+        $this->client->setRedirectUri(config('google.grant_domain'));
         Log::get()->info('参数：' . json_encode($params));
         $res = $this->client->fetchAccessTokenWithAuthCode($params['code']);
         Log::get()->info('auth code:' . json_encode($res));
