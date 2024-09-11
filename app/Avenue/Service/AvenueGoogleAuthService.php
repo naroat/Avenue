@@ -38,7 +38,7 @@ class AvenueGoogleAuthService extends AbstractService
         $this->client->setClientId(config('google.client_id'));
         $this->client->setScopes('email profile');
         $this->client->setClientSecret(config('google.client_secret'));
-        $this->client->setRedirectUri('https://www.avenue.wang');
+        $this->client->setRedirectUri('https://www.avenue.wang/api/v1/avenue/google/auth/notify');
         Log::get()->info('参数：' . json_encode($params));
         $res = $this->client->fetchAccessTokenWithAuthCode($params['code']);
         Log::get()->info('auth code:' . json_encode($res));
