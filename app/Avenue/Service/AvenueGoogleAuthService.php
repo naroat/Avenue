@@ -29,8 +29,9 @@ class AvenueGoogleAuthService extends AbstractService
     public function notify($params)
     {
         Log::get()->info('========google notiify start ======');
-        if (isset($params['code']) && $params['code'] == '') {
-            throw new \Exception("param error");
+        if (!isset($params['code'])) {
+            Log::get()->info('error: no code');
+            return false;
         }
 //        $this->client->setAuthConfigFile();
 //        $this->client->setAuthConfig();
