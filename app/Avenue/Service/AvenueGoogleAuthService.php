@@ -45,7 +45,7 @@ class AvenueGoogleAuthService extends AbstractService
 
         $accessToken = $this->client->getAccessToken();
 
-        Log::get()->info('access_token:' . $accessToken ?? '');
+        Log::get()->info('access_token:' . $accessToken);
 
         //获取用户信息
 
