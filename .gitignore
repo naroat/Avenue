@@ -20,3 +20,4 @@ public
 *.lock
 docker/nginx-frontend/cert/*
 docker/nginx-frontend/servers/avenue*
+composer.phar
