@@ -29,6 +29,9 @@ class TestCommand extends HyperfCommand
 
     public function handle()
     {
+/*        var_dump(config('google.grant_domain') . '/api/v1/avenue/google/auth/notify');
+        exit;*/
+
 //        Log::get()->info('123123');
         $ser = make(AvenueGoogleAuthService::class);
         var_dump($ser->authUrl());
