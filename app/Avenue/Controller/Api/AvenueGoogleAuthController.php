@@ -7,6 +7,7 @@ use App\Package\Verify;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
+use Hyperf\HttpServer\Contract\ResponseInterface;
 use Mine\MineController;
 
 #[Controller(prefix: 'v1/avenue/google/auth')]
@@ -34,7 +35,7 @@ class AvenueGoogleAuthController extends MineController
     }
 
     #[RequestMapping(path: "notify", methods: "get")]
-    public function notify()
+    public function notify(ResponseInterface $response)
     {
 /*        array(4) {
                 ["code"]=>
@@ -46,9 +47,13 @@ class AvenueGoogleAuthController extends MineController
                 ["prompt"]=>
           string(7) "consent"
         }*/
+//        header('Location: ' . config('google.grant_domain'));
+
+
         try {
             $list = $this->service->notify($this->request->all());
-            return $this->success($list);
+            return $response->redirect('http://www.baidu.com');
+//            return $this->success($list);
         } catch (\Exception $e) {
             return $this->error($e->getMessage());
         }

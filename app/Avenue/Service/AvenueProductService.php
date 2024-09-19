@@ -118,9 +118,9 @@ class AvenueProductService extends AbstractService
             'keywords' => '',
             'desc' => '',
         ];
-        $html = Utils::httpRequest($trimmedInput);
+        $res = Utils::httpRequest($trimmedInput);
         $dom = new \DOMDocument();
-        @$dom->loadHTML($html);
+        @$dom->loadHTML($res['response']);
         $metas = $dom->getElementsByTagName('meta');
         $links = $dom->getElementsByTagName('link');
         $titles = $dom->getElementsByTagName('title');

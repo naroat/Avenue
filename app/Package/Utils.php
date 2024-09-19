@@ -73,6 +73,13 @@ class Utils
             curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         }
 
+        //proxy
+        if (isset($option['proxy'])) {
+            curl_setopt($ch, CURLOPT_PROXY, $option['proxy']['ip']);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $option['proxy']['port']);
+            curl_setopt($ch, CURLOPT_PROXYTYPE, $option['proxy']['type'] ?? CURLPROXY_HTTP);
+        }
+
 //        var_dump(123123);exit;
         //在HTTP请求中包含一个"User-Agent: "头的字符串。
         curl_setopt( $ch, CURLOPT_USERAGENT , 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36' );

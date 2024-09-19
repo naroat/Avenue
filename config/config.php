@@ -30,4 +30,11 @@ return [
             LogLevel::WARNING,
         ],
     ],
+    # curl proxy
+    'curl_proxy' => [
+        'enable' => env('CURL_PROXY_ENABLE', 'false'),
+        'host' => env('CURL_PROXY_HOST', ''),
+        'port' => env('CURL_PROXY_POST', ''),
+        'type' => ['http' => CURLPROXY_HTTP, 'socket4' => CURLPROXY_SOCKS4, 'socket5' => CURLPROXY_SOCKS5][env('CURL_PROXY_TYPE', 'http')],
+    ]
 ];

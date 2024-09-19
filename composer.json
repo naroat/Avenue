@@ -17,6 +17,7 @@
   "require": {
     "google/apiclient": "^2.17",
     "mineadmin/app-store": "~2.0",
+    "reasno/swoole-aliyunoss-addon": "^1.0",
     "xmo/jwt-auth": "~2.0",
     "xmo/mine-core": "~2.0",
     "xmo/mine-generator": "~2.0",
