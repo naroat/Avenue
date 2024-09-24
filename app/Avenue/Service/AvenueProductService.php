@@ -47,15 +47,20 @@ class AvenueProductService extends AbstractService
     }
 
     #[Transactional]
-    public function save(array $data): mixed
+    public function save(array $data): bool
     {
         if ($this->mapper->getModel()->where('link', $data['link'])->exists()) {
             throw new \Exception('产品已存在');
         }
-        $tags = $data['tags'];
+
+        $tags = $data['tags'] ?? '';
         unset($data['tags']);
+
         $productId = $this->mapper->save($data);
-        $this->saveTag($productId, $tags);
+
+        if (!empty($tags)) {
+            $this->saveTag($productId, $tags);
+        }
         return true;
     }
 
@@ -120,7 +125,8 @@ class AvenueProductService extends AbstractService
         ];
         $res = Utils::httpRequest($trimmedInput);
         $dom = new \DOMDocument();
-        @$dom->loadHTML($res['response']);
+        //!empty($res['response']) ? $res['response'] :
+        @$dom->loadHTML($res);
         $metas = $dom->getElementsByTagName('meta');
         $links = $dom->getElementsByTagName('link');
         $titles = $dom->getElementsByTagName('title');
@@ -136,8 +142,14 @@ class AvenueProductService extends AbstractService
             }
         }
 
+        //title
+        for ($i = 0; $i < $titles->length; $i++) {
+            $title = $titles->item($i);
+            $data['title'] = $title->textContent;
+        }
+
         //logo
-        $data['logo'] = trim($url, '/') . '/favicon.ico';
+        /*$data['logo'] = trim($url, '/') . '/favicon.ico';
         if (!getimagesize($data['logo'])) {
             for ($i = 0; $i < $links->length; $i++) {
                 $link = $links->item($i);
@@ -150,13 +162,8 @@ class AvenueProductService extends AbstractService
                     $data['logo'] = trim($url, '/') . $data['logo'];
                 }
             }
-        }
+        }*/
 
-        //title
-        for ($i = 0; $i < $titles->length; $i++) {
-            $title = $titles->item($i);
-            $data['title'] = $title->textContent;
-        }
 
         return $data;
     }

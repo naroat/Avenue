@@ -32,6 +32,12 @@ class TestCommand extends HyperfCommand
 
     public function handle()
     {
+        $data = [
+            'aa' => 11
+        ];
+        $tags = '1';
+        var_dump(!empty($tags));
+        exit;
 /*        var_dump(config('google.grant_domain') . '/api/v1/avenue/google/auth/notify');
         exit;*/
 //        Log::get()->info('123123');

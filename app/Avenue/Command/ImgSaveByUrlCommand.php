@@ -31,15 +31,15 @@ class ImgSaveByUrlCommand extends HyperfCommand
         $this->setDescription('通过图片url保存logo到oss/服务器， ');
         $this->addArgument('url', InputArgument::OPTIONAL, '图片url');
     }
-
+//17267403918851.ico
     public function handle()
     {
         //获取参数
-        $url = $this->input->getArguments();
+        $params = $this->input->getArguments();
         //功能
-        $imgUrl = $url;
+        $imgUrl = $params['url'];
         $upload = new Upload();
-        $upload_remote_path = 'public/uploads/product/logo/';
+        $upload_remote_path = 'avenue/product/logo/';
         $finally_path = $upload->toOssByUrl($imgUrl, $upload_remote_path);
         var_dump($finally_path);
     }

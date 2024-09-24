@@ -26,7 +26,7 @@ class AvenueProductController extends MineController
                 ['title',  ''],
                 ['cate_id', ''],
                 ['tag_id', ''],
-                ['sort', ''],    //0默认，1最新，2最热
+                ['sort', 1],    //1最新，2最热
                 ['status', '1'],
                 ['limit', 36],
             ], $this->request);
@@ -42,6 +42,24 @@ class AvenueProductController extends MineController
     {
         try {
             $list = $this->service->addClick($id);
+            return $this->success($list);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage());
+        }
+    }
+
+    #[RequestMapping(path: "submit", methods: "post")]
+    public function submit()
+    {
+        try {
+            $params = $this->verify->requestParams([
+                ['title', ''],
+                ['link', ''],
+                ['desc', ''],
+                ['tags', ''],
+                ['status', 2],
+            ], $this->request);
+            $list = $this->service->save($params);
             return $this->success($list);
         } catch (\Exception $e) {
             return $this->error($e->getMessage());

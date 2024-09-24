@@ -106,8 +106,11 @@ class AvenueProductMapper extends AbstractMapper
             );
         }
 
-        //sortgit pu
-        $query->orderBy('id', 'desc');
+        return $query;
+    }
+
+    public function handleOrder(Builder $query, ?array &$params = null): Builder
+    {
         if (isset($params['sort']) && in_array($params['sort'], [1, 2])) {
             if ($params['sort'] == 1) {
                 //new
@@ -116,8 +119,9 @@ class AvenueProductMapper extends AbstractMapper
                 //hot
                 $query->orderBy('click', 'desc');
             }
+        } else {
+            $query->orderBy('id', 'desc');
         }
-
         return $query;
     }
 }
